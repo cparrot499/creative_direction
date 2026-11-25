@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Music Showcase</title>
 
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f7f7f5;
+  color: #252525;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+}
+
+/* Same drifting texture as the original site */
+#bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: #f7f7f5;
+  background-image:
+    radial-gradient(circle, rgba(0, 0, 0, 0.10) 1.2px, transparent 1.7px),
+    linear-gradient(135deg,
+      rgba(0, 0, 0, 0.045) 25%, transparent 25%,
+      transparent 50%, rgba(0, 0, 0, 0.045) 50%,
+      rgba(0, 0, 0, 0.045) 75%, transparent 75%);
+  background-size: 26px 26px, 40px 40px;
+}
+
+/* ---------- Three-column layout: image | big box | image ---------- */
+.layout {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 620px) 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Images */
+.side-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  background: white;
+  border: 1px solid #e8e8e5;
+  border-radius: 16px;
+}
+
+/* Shown until you add your own image file */
+.placeholder {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px dashed #ccc;
+  border-radius: 16px;
+  color: #aaa;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 10px;
+}
+
+/* ---------- Big middle box (same look as the original player) ---------- */
+.player {
+  position: relative;
+  width: 100%;
+  background: white;
+  padding: 42px;
+  border: 1px solid #e8e8e5;
+  border-radius: 16px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 34px;
+  font-weight: 500;
+  margin: 20px 0 10px;
+}
+
+.description {
+  color: #777;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 30px 0;
+}
+
+.label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 14px;
+}
+
+/* ---------- Small sound player (under the image) ---------- */
+.mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1px solid #e8e8e5;
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+.mini button {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: #292929;
+  color: white;
+  font-size: 11px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.mini button:hover { transform: translateY(-1px); }
+.mini button:active { transform: scale(0.92); }
+
+.mini-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mini-title {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+
+.mini-bar {
+  height: 4px;
+  background: #e8e8e5;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.mini-fill {
+  height: 100%;
+  width: 0%;
+  background: #292929;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.footer {
+  text-align: center;
+  color: #aaa;
+  font-size: 11px;
+  margin: 10px 0 20px;
+  letter-spacing: 1px;
+}
+
+/* Tablets and phones: stack everything */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    max-width: 620px;
+  }
+  .player { order: -1; }          /* big box first */
+  .side { max-width: 320px; width: 100%; margin: 0 auto; }
+}
+
+@media (max-width: 480px) {
+  .player { padding: 25px; }
+  h1 { font-size: 28px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+
+<div class="layout">
+
+  <!-- LEFT: image + small sound player underneath -->
+  <aside class="side">
+    <img class="side-image" src="image1.png" alt="Left image"
+         onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 1<br>(image1.png)</div>'">
+
+    <div class="mini">
+      <button id="miniPlay" aria-label="Play sound">▶</button>
+      <div class="mini-info">
+        <div class="mini-title">Sound name here</div>
+        <div class="mini-bar" id="miniBar"><div class="mini-fill" id="miniFill"></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MIDDLE: the big box -->
+  <main class="player">
+    <div class="eyebrow">Your name / project</div>
+
+    <h1>Title goes here</h1>
+
+    <p class="description">
+      Write about this part of your music here.
+    </p>
+
+    <hr class="divider">
+
+    <div class="label">SECTION LABEL</div>
+
+    <p class="description">
+      More content for the big box goes here.
+    </p>
+  </main>
+
+  <!-- RIGHT: image -->
+  <aside class="side">
+    <img class="side-image" src="image2.png" alt="Right image"
+         onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 2<br>(image2.png)</div>'">
+  </aside>
+
+</div>
+
+<div class="footer">MUSIC SHOWCASE</div>
+
+<audio id="miniAudio" src="sound.mp3" preload="metadata"></audio>
+
+<script>
+// ---------- Moving background (drifts only while the sound plays) ----------
+const bg = document.getElementById("bg");
+const BG_SPEED = 14;
+let bgX = 0, bgY = 0, bgVelocity = 0, bgTarget = 0;
+let bgLast = performance.now();
+
+function animateBackground(now) {
+  const dt = Math.min((now - bgLast) / 1000, 0.1);
+  bgLast = now;
+  bgVelocity += (bgTarget - bgVelocity) * Math.min(dt * 1.5, 1);
+  bgX += bgVelocity * dt;
+  bgY += bgVelocity * 0.6 * dt;
+  bg.style.backgroundPosition =
+    bgX + "px " + bgY + "px, " + (bgX * 0.5) + "px " + (bgY * 0.5) + "px";
+  requestAnimationFrame(animateBackground);
+}
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  requestAnimationFrame(animateBackground);
+}
+
+// ---------- Small sound player ----------
+const audio = document.getElementById("miniAudio");
+const playBtn = document.getElementById("miniPlay");
+const bar = document.getElementById("miniBar");
+const fill = document.getElementById("miniFill");
+
+playBtn.addEventListener("click", () => {
+  if (audio.paused) {
+    audio.play().catch(() => {});
+  } else {
+    audio.pause();
+  }
+});
+
+audio.addEventListener("play",  () => { playBtn.textContent = "Ⅱ"; bgTarget = BG_SPEED; });
+audio.addEventListener("pause", () => { playBtn.textContent = "▶"; bgTarget = 0; });
+audio.addEventListener("ended", () => { playBtn.textContent = "▶"; bgTarget = 0; fill.style.width = "0%"; });
+
+audio.addEventListener("timeupdate", () => {
+  if (audio.duration) fill.style.width = (audio.currentTime / audio.duration * 100) + "%";
+});
+
+// Click the bar to jump
+bar.addEventListener("click", event => {
+  if (!audio.duration) return;
+  const rect = bar.getBoundingClientRect();
+  audio.currentTime = ((event.clientX - rect.left) / rect.width) * audio.duration;
+});
+</script>
+
+</body>
+</html>
