@@ -26,7 +26,7 @@ html, body {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f1f8ea;
+  background: #ecf7e2;
   color: var(--ink);
   font-family: Arial, sans-serif;
   display: flex;
@@ -44,43 +44,54 @@ body {
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  background: #f1f8ea;
+  background: #ecf7e2;
 }
 
-/* ---------- Title (inside the box) ---------- */
-h1 {
-  grid-column: 1 / -1;
-  font-size: 34px;
-  font-weight: 500;
-  margin: 4px 0 6px;
-  text-align: center;
-}
-
-/* ---------- One big box holding the images and the sound ---------- */
+/* ---------- The big box ---------- */
 .player {
   position: relative;
   width: 100%;
-  max-width: 920px;
+  max-width: 1240px;
   background: var(--card);
-  padding: 28px;
+  padding: 32px;
   border: 1px solid var(--line);
   border-radius: 16px;
+}
+
+h1 {
+  font-size: 34px;
+  font-weight: 500;
+  margin: 4px 0 28px;
+  text-align: center;
+}
+
+/* images | divider | text */
+.content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) 1px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+/* 2 x 2 images */
+.gallery {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
+  gap: 16px;
+  min-width: 0;
 }
 
 .side {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
 .side-image {
   width: 100%;
-  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
   display: block;
   background: var(--card);
   border: 1px solid var(--line);
@@ -103,6 +114,27 @@ h1 {
   text-transform: uppercase;
   text-align: center;
   padding: 10px;
+}
+
+/* ---------- Divider and text on the right ---------- */
+.vdivider {
+  align-self: stretch;
+  background: #e1ecd7;
+}
+
+.info .label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #849079;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.info .description {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 14px;
+  margin: 0 0 14px;
 }
 
 /* ---------- Small sound player ---------- */
@@ -153,11 +185,23 @@ h1 {
   pointer-events: none;
 }
 
-@media (max-width: 700px) {
-  .player {
+/* Tablets: text drops below the images */
+@media (max-width: 900px) {
+  .content {
     grid-template-columns: 1fr;
-    padding: 20px;
+    gap: 24px;
   }
+  .vdivider {
+    height: 1px;
+    width: 100%;
+    align-self: auto;
+  }
+}
+
+/* Phones: one image per row */
+@media (max-width: 520px) {
+  .player { padding: 20px; }
+  .gallery { grid-template-columns: 1fr; }
   h1 { font-size: 28px; }
 }
 </style>
@@ -171,54 +215,76 @@ h1 {
 
   <h1>Example - 1</h1>
 
-  <!-- LEFT: image + small sound player underneath -->
-  <div class="side">
-    <img class="side-image" src="image1.png" alt="Left image"
-         onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 1<br>(image1.png)</div>'">
+  <div class="content">
 
-    <div class="mini" data-src="abandoneddockstart.wav">
-      <button class="mini-play" aria-label="Play sound">▶</button>
-      <div class="mini-info">
-        <div class="mini-bar"><div class="mini-fill"></div></div>
+    <!-- Images: top row has the sound players, bottom row has the two new image boxes -->
+    <div class="gallery">
+
+      <div class="side">
+        <img class="side-image" src="image1.png" alt="Image 1"
+             onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 1<br>(image1.png)</div>'">
+        <div class="mini" data-src="abandoneddockstart.wav">
+          <button class="mini-play" aria-label="Play sound">▶</button>
+          <div class="mini-info"><div class="mini-bar"><div class="mini-fill"></div></div></div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- RIGHT: image + small sound player underneath -->
-  <div class="side">
-    <img class="side-image" src="image2.png" alt="Right image"
-         onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 2<br>(image2.png)</div>'">
-
-    <div class="mini" data-src="abandoneddockstart_1.wav">
-      <button class="mini-play" aria-label="Play sound">▶</button>
-      <div class="mini-info">
-        <div class="mini-bar"><div class="mini-fill"></div></div>
+      <div class="side">
+        <img class="side-image" src="image2.png" alt="Image 2"
+             onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 2<br>(image2.png)</div>'">
+        <div class="mini" data-src="abandoneddockstart_1.wav">
+          <button class="mini-play" aria-label="Play sound">▶</button>
+          <div class="mini-info"><div class="mini-bar"><div class="mini-fill"></div></div></div>
+        </div>
       </div>
-    </div>
-  </div>
 
+      <div class="side">
+        <img class="side-image" src="image3.png" alt="Image 3"
+             onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 3<br>(image3.png)</div>'">
+      </div>
+
+      <div class="side">
+        <img class="side-image" src="image4.png" alt="Image 4"
+             onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 4<br>(image4.png)</div>'">
+      </div>
+
+    </div>
+
+    <div class="vdivider"></div>
+
+    <!-- Text on the right -->
+    <div class="info">
+      <div class="label">Section label</div>
+      <p class="description">Write about these images here.</p>
+      <p class="description">More text can go here.</p>
+    </div>
+
+  </div>
 </main>
-</audio>
 
 <script>
 // ---------- Swirl background ----------
 // Drawn small and stretched up by the browser, which also blurs it softly.
-// It only spins while the sound is playing, and eases to a stop when paused.
+// It always drifts: the swirl turns, its centre wanders, the winding breathes in and out
+// and the greens shift. It speeds up while a sound is playing.
 const canvas = document.getElementById("swirl");
 const ctx2d = canvas.getContext("2d");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const SCALE = 8;                 // 1 canvas pixel = 8 screen pixels
 const ARMS = 3;                  // how many swirl arms
 const TWIST = 7;                 // how tightly the arms wind up
-const SPIN_SPEED = 0.45;         // radians per second while playing
+const IDLE_SPEED = 0.18;         // radians per second when nothing is playing
+const PLAY_SPEED = 0.6;          // radians per second while a sound plays
 
-// Two very light greens the swirl blends between
-const COLOR_A = [243, 250, 236]; // lightest
-const COLOR_B = [222, 243, 202]; // a touch greener
+// Light base green, and two stronger greens the bands blend toward
+const COLOR_A  = [236, 247, 226];
+const COLOR_B1 = [176, 230, 130];
+const COLOR_B2 = [200, 240, 150];
 
-let W = 0, H = 0, image, angles, radii;
-let phase = 0, spin = 0, spinTarget = 0;
+let W = 0, H = 0, image;
+let clock = 0, phase = 0, spin = IDLE_SPEED, spinTarget = IDLE_SPEED;
 let lastTime = performance.now();
-let running = false;
 
 function resizeSwirl() {
   W = Math.max(40, Math.ceil(window.innerWidth / SCALE));
@@ -226,35 +292,45 @@ function resizeSwirl() {
   canvas.width = W;
   canvas.height = H;
   image = ctx2d.createImageData(W, H);
-  angles = new Float32Array(W * H);
-  radii = new Float32Array(W * H);
-
-  const cx = W / 2, cy = H / 2, size = Math.min(W, H);
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const dx = x - cx, dy = y - cy;
-      angles[y * W + x] = Math.atan2(dy, dx);
-      radii[y * W + x] = Math.sqrt(dx * dx + dy * dy) / size;
-    }
-  }
   drawSwirl();
 }
 
 function drawSwirl() {
   const data = image.data;
-  for (let i = 0; i < angles.length; i++) {
-    const r = radii[i];
-    // Arms spiral outward: the angle is shifted by how far from the middle we are
-    let t = Math.sin(ARMS * angles[i] + TWIST * r - phase) * 0.5 + 0.5;
-    t += (Math.sin(2 * ARMS * angles[i] - TWIST * 1.6 * r + phase * 0.6) * 0.5 + 0.5) * 0.35;
-    t = Math.min(t / 1.35, 1);
-    t = t * t * (3 - 2 * t);     // smooth the edges of the bands
+  const size = Math.min(W, H);
 
-    const p = i * 4;
-    data[p]     = COLOR_A[0] + (COLOR_B[0] - COLOR_A[0]) * t;
-    data[p + 1] = COLOR_A[1] + (COLOR_B[1] - COLOR_A[1]) * t;
-    data[p + 2] = COLOR_A[2] + (COLOR_B[2] - COLOR_A[2]) * t;
-    data[p + 3] = 255;
+  // The centre slowly wanders, and the winding breathes
+  const cx = W / 2 + Math.sin(clock * 0.23) * W * 0.18;
+  const cy = H / 2 + Math.cos(clock * 0.17) * H * 0.18;
+  const twist = TWIST + Math.sin(clock * 0.12) * 2.5;
+
+  // The stronger green slowly shifts between two shades
+  const m = Math.sin(clock * 0.1) * 0.5 + 0.5;
+  const B = [
+    COLOR_B1[0] + (COLOR_B2[0] - COLOR_B1[0]) * m,
+    COLOR_B1[1] + (COLOR_B2[1] - COLOR_B1[1]) * m,
+    COLOR_B1[2] + (COLOR_B2[2] - COLOR_B1[2]) * m
+  ];
+
+  let p = 0;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const dx = x - cx, dy = y - cy;
+      const angle = Math.atan2(dy, dx);
+      const r = Math.sqrt(dx * dx + dy * dy) / size;
+
+      // Arms spiral outward: the angle is shifted by how far from the middle we are
+      let t = Math.sin(ARMS * angle + twist * r - phase) * 0.5 + 0.5;
+      t += (Math.sin(2 * ARMS * angle - twist * 1.6 * r + phase * 0.6) * 0.5 + 0.5) * 0.35;
+      t = Math.min(t / 1.35, 1);
+      t = t * t * (3 - 2 * t);     // smooth the edges of the bands
+
+      data[p]     = COLOR_A[0] + (B[0] - COLOR_A[0]) * t;
+      data[p + 1] = COLOR_A[1] + (B[1] - COLOR_A[1]) * t;
+      data[p + 2] = COLOR_A[2] + (B[2] - COLOR_A[2]) * t;
+      data[p + 3] = 255;
+      p += 4;
+    }
   }
   ctx2d.putImageData(image, 0, 0);
 }
@@ -263,32 +339,20 @@ function animateSwirl(now) {
   const dt = Math.min((now - lastTime) / 1000, 0.1);
   lastTime = now;
 
+  clock += dt;
   spin += (spinTarget - spin) * Math.min(dt * 1.5, 1);
   phase += spin * dt;
   drawSwirl();
 
-  if (spinTarget === 0 && Math.abs(spin) < 0.003) {
-    running = false;             // fully stopped: stop drawing to save battery
-    return;
-  }
   requestAnimationFrame(animateSwirl);
 }
 
-function startSwirl() {
-  if (reduceMotion) return;
-  if (!running) {
-    running = true;
-    lastTime = performance.now();
-    requestAnimationFrame(animateSwirl);
-  }
-}
-
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 window.addEventListener("resize", resizeSwirl);
 resizeSwirl();
+if (!reduceMotion) requestAnimationFrame(animateSwirl);   // people who ask for less motion get a still swirl
 
 // ---------- Small sound players ----------
-// Only one plays at a time; the swirl spins while any of them is playing.
+// Only one plays at a time; the swirl speeds up while any of them is playing.
 const miniPlayers = [];
 
 function anyPlaying() {
@@ -317,19 +381,18 @@ document.querySelectorAll(".mini").forEach(root => {
 
   audio.addEventListener("play", () => {
     playBtn.textContent = "Ⅱ";
-    spinTarget = SPIN_SPEED;
-    startSwirl();
+    spinTarget = PLAY_SPEED;
   });
 
   audio.addEventListener("pause", () => {
     playBtn.textContent = "▶";
-    if (!anyPlaying()) spinTarget = 0;
+    if (!anyPlaying()) spinTarget = IDLE_SPEED;
   });
 
   audio.addEventListener("ended", () => {
     playBtn.textContent = "▶";
     fill.style.width = "0%";
-    if (!anyPlaying()) spinTarget = 0;
+    if (!anyPlaying()) spinTarget = IDLE_SPEED;
   });
 
   audio.addEventListener("timeupdate", () => {
