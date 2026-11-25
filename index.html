@@ -3,10 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Music Showcase</title>
+<title>Example - 1</title>
 
 <style>
 * { box-sizing: border-box; }
+
+:root {
+  --ink: #232a1f;          /* text */
+  --muted: #7a8574;        /* soft text */
+  --line: #dde8d2;         /* borders */
+  --card: #fcfef9;         /* box background */
+  --dark: #2b3527;         /* buttons */
+  --accent: #a6f27a;       /* light green, a touch lighter than #9AF562 */
+}
 
 html, body {
   max-width: 100%;
@@ -17,8 +26,8 @@ html, body {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f7f7f5;
-  color: #252525;
+  background: #f1f8ea;
+  color: var(--ink);
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
@@ -27,29 +36,38 @@ body {
   padding: 24px;
 }
 
-/* Same drifting texture as the original site */
-#bg {
+/* Swirl background (drawn by the script) */
+#swirl {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: -1;
   pointer-events: none;
-  background-color: #f7f7f5;
-  background-image:
-    radial-gradient(circle, rgba(0, 0, 0, 0.10) 1.2px, transparent 1.7px),
-    linear-gradient(135deg,
-      rgba(0, 0, 0, 0.045) 25%, transparent 25%,
-      transparent 50%, rgba(0, 0, 0, 0.045) 50%,
-      rgba(0, 0, 0, 0.045) 75%, transparent 75%);
-  background-size: 26px 26px, 40px 40px;
+  background: #f1f8ea;
 }
 
-/* ---------- Three-column layout: image | big box | image ---------- */
-.layout {
+/* ---------- Title (inside the box) ---------- */
+h1 {
+  grid-column: 1 / -1;
+  font-size: 34px;
+  font-weight: 500;
+  margin: 4px 0 6px;
+  text-align: center;
+}
+
+/* ---------- One big box holding the images and the sound ---------- */
+.player {
+  position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 920px;
+  background: var(--card);
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   display: grid;
-  grid-template-columns: 1fr minmax(0, 620px) 1fr;
-  gap: 28px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
   align-items: start;
 }
 
@@ -60,28 +78,26 @@ body {
   min-width: 0;
 }
 
-/* Images */
 .side-image {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  height: auto;
   display: block;
-  background: white;
-  border: 1px solid #e8e8e5;
-  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
 }
 
-/* Shown until you add your own image file */
+/* Shown if an image file is missing */
 .placeholder {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  border: 1px dashed #ccc;
-  border-radius: 16px;
-  color: #aaa;
+  background: var(--card);
+  border: 1px dashed #c3d6b3;
+  border-radius: 10px;
+  color: #a2b096;
   font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -89,54 +105,13 @@ body {
   padding: 10px;
 }
 
-/* ---------- Big middle box (same look as the original player) ---------- */
-.player {
-  position: relative;
-  width: 100%;
-  background: white;
-  padding: 42px;
-  border: 1px solid #e8e8e5;
-  border-radius: 16px;
-}
-
-.eyebrow {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: #888;
-  text-transform: uppercase;
-}
-
-h1 {
-  font-size: 34px;
-  font-weight: 500;
-  margin: 20px 0 10px;
-}
-
-.description {
-  color: #777;
-  line-height: 1.6;
-  font-size: 14px;
-}
-
-.divider {
-  border: 0;
-  border-top: 1px solid #eee;
-  margin: 30px 0;
-}
-
-.label {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 14px;
-}
-
-/* ---------- Small sound player (under the image) ---------- */
+/* ---------- Small sound player ---------- */
 .mini {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: white;
-  border: 1px solid #e8e8e5;
+  background: var(--card);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 8px 12px;
 }
@@ -147,7 +122,7 @@ h1 {
   height: 30px;
   border: none;
   border-radius: 50%;
-  background: #292929;
+  background: var(--dark);
   color: white;
   font-size: 11px;
   cursor: pointer;
@@ -162,18 +137,9 @@ h1 {
   min-width: 0;
 }
 
-.mini-title {
-  font-size: 11px;
-  color: #666;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 5px;
-}
-
 .mini-bar {
   height: 4px;
-  background: #e8e8e5;
+  background: #e3eed9;
   border-radius: 2px;
   cursor: pointer;
   position: relative;
@@ -182,31 +148,16 @@ h1 {
 .mini-fill {
   height: 100%;
   width: 0%;
-  background: #292929;
+  background: #8fdc5c;
   border-radius: 2px;
   pointer-events: none;
 }
 
-.footer {
-  text-align: center;
-  color: #aaa;
-  font-size: 11px;
-  margin: 10px 0 20px;
-  letter-spacing: 1px;
-}
-
-/* Tablets and phones: stack everything */
-@media (max-width: 900px) {
-  .layout {
+@media (max-width: 700px) {
+  .player {
     grid-template-columns: 1fr;
-    max-width: 620px;
+    padding: 20px;
   }
-  .player { order: -1; }          /* big box first */
-  .side { max-width: 320px; width: 100%; margin: 0 auto; }
-}
-
-@media (max-width: 480px) {
-  .player { padding: 25px; }
   h1 { font-size: 28px; }
 }
 </style>
@@ -214,103 +165,182 @@ h1 {
 
 <body>
 
-<div id="bg"></div>
+<canvas id="swirl"></canvas>
 
-<div class="layout">
+<main class="player">
+
+  <h1>Example - 1</h1>
 
   <!-- LEFT: image + small sound player underneath -->
-  <aside class="side">
+  <div class="side">
     <img class="side-image" src="image1.png" alt="Left image"
          onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 1<br>(image1.png)</div>'">
 
-    <div class="mini">
-      <button id="miniPlay" aria-label="Play sound">▶</button>
+    <div class="mini" data-src="abandoneddockstart.wav">
+      <button class="mini-play" aria-label="Play sound">▶</button>
       <div class="mini-info">
-        <div class="mini-title">Sound name here</div>
-        <div class="mini-bar" id="miniBar"><div class="mini-fill" id="miniFill"></div></div>
+        <div class="mini-bar"><div class="mini-fill"></div></div>
       </div>
     </div>
-  </aside>
+  </div>
 
-  <!-- MIDDLE: the big box -->
-  <main class="player">
-    <div class="eyebrow">Your name / project</div>
-
-    <h1>Title goes here</h1>
-
-    <p class="description">
-      Write about this part of your music here.
-    </p>
-
-    <hr class="divider">
-
-    <div class="label">SECTION LABEL</div>
-
-    <p class="description">
-      More content for the big box goes here.
-    </p>
-  </main>
-
-  <!-- RIGHT: image -->
-  <aside class="side">
+  <!-- RIGHT: image + small sound player underneath -->
+  <div class="side">
     <img class="side-image" src="image2.png" alt="Right image"
          onerror="this.outerHTML='<div class=&quot;placeholder&quot;>Image 2<br>(image2.png)</div>'">
-  </aside>
 
-</div>
+    <div class="mini" data-src="abandoneddockstart_1.wav">
+      <button class="mini-play" aria-label="Play sound">▶</button>
+      <div class="mini-info">
+        <div class="mini-bar"><div class="mini-fill"></div></div>
+      </div>
+    </div>
+  </div>
 
-<div class="footer">MUSIC SHOWCASE</div>
-
-<audio id="miniAudio" src="sound.mp3" preload="metadata"></audio>
+</main>
+</audio>
 
 <script>
-// ---------- Moving background (drifts only while the sound plays) ----------
-const bg = document.getElementById("bg");
-const BG_SPEED = 14;
-let bgX = 0, bgY = 0, bgVelocity = 0, bgTarget = 0;
-let bgLast = performance.now();
+// ---------- Swirl background ----------
+// Drawn small and stretched up by the browser, which also blurs it softly.
+// It only spins while the sound is playing, and eases to a stop when paused.
+const canvas = document.getElementById("swirl");
+const ctx2d = canvas.getContext("2d");
+const SCALE = 8;                 // 1 canvas pixel = 8 screen pixels
+const ARMS = 3;                  // how many swirl arms
+const TWIST = 7;                 // how tightly the arms wind up
+const SPIN_SPEED = 0.45;         // radians per second while playing
 
-function animateBackground(now) {
-  const dt = Math.min((now - bgLast) / 1000, 0.1);
-  bgLast = now;
-  bgVelocity += (bgTarget - bgVelocity) * Math.min(dt * 1.5, 1);
-  bgX += bgVelocity * dt;
-  bgY += bgVelocity * 0.6 * dt;
-  bg.style.backgroundPosition =
-    bgX + "px " + bgY + "px, " + (bgX * 0.5) + "px " + (bgY * 0.5) + "px";
-  requestAnimationFrame(animateBackground);
-}
-if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  requestAnimationFrame(animateBackground);
-}
+// Two very light greens the swirl blends between
+const COLOR_A = [243, 250, 236]; // lightest
+const COLOR_B = [222, 243, 202]; // a touch greener
 
-// ---------- Small sound player ----------
-const audio = document.getElementById("miniAudio");
-const playBtn = document.getElementById("miniPlay");
-const bar = document.getElementById("miniBar");
-const fill = document.getElementById("miniFill");
+let W = 0, H = 0, image, angles, radii;
+let phase = 0, spin = 0, spinTarget = 0;
+let lastTime = performance.now();
+let running = false;
 
-playBtn.addEventListener("click", () => {
-  if (audio.paused) {
-    audio.play().catch(() => {});
-  } else {
-    audio.pause();
+function resizeSwirl() {
+  W = Math.max(40, Math.ceil(window.innerWidth / SCALE));
+  H = Math.max(40, Math.ceil(window.innerHeight / SCALE));
+  canvas.width = W;
+  canvas.height = H;
+  image = ctx2d.createImageData(W, H);
+  angles = new Float32Array(W * H);
+  radii = new Float32Array(W * H);
+
+  const cx = W / 2, cy = H / 2, size = Math.min(W, H);
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const dx = x - cx, dy = y - cy;
+      angles[y * W + x] = Math.atan2(dy, dx);
+      radii[y * W + x] = Math.sqrt(dx * dx + dy * dy) / size;
+    }
   }
-});
+  drawSwirl();
+}
 
-audio.addEventListener("play",  () => { playBtn.textContent = "Ⅱ"; bgTarget = BG_SPEED; });
-audio.addEventListener("pause", () => { playBtn.textContent = "▶"; bgTarget = 0; });
-audio.addEventListener("ended", () => { playBtn.textContent = "▶"; bgTarget = 0; fill.style.width = "0%"; });
+function drawSwirl() {
+  const data = image.data;
+  for (let i = 0; i < angles.length; i++) {
+    const r = radii[i];
+    // Arms spiral outward: the angle is shifted by how far from the middle we are
+    let t = Math.sin(ARMS * angles[i] + TWIST * r - phase) * 0.5 + 0.5;
+    t += (Math.sin(2 * ARMS * angles[i] - TWIST * 1.6 * r + phase * 0.6) * 0.5 + 0.5) * 0.35;
+    t = Math.min(t / 1.35, 1);
+    t = t * t * (3 - 2 * t);     // smooth the edges of the bands
 
-audio.addEventListener("timeupdate", () => {
-  if (audio.duration) fill.style.width = (audio.currentTime / audio.duration * 100) + "%";
-});
+    const p = i * 4;
+    data[p]     = COLOR_A[0] + (COLOR_B[0] - COLOR_A[0]) * t;
+    data[p + 1] = COLOR_A[1] + (COLOR_B[1] - COLOR_A[1]) * t;
+    data[p + 2] = COLOR_A[2] + (COLOR_B[2] - COLOR_A[2]) * t;
+    data[p + 3] = 255;
+  }
+  ctx2d.putImageData(image, 0, 0);
+}
 
-// Click the bar to jump
-bar.addEventListener("click", event => {
-  if (!audio.duration) return;
-  const rect = bar.getBoundingClientRect();
-  audio.currentTime = ((event.clientX - rect.left) / rect.width) * audio.duration;
+function animateSwirl(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.1);
+  lastTime = now;
+
+  spin += (spinTarget - spin) * Math.min(dt * 1.5, 1);
+  phase += spin * dt;
+  drawSwirl();
+
+  if (spinTarget === 0 && Math.abs(spin) < 0.003) {
+    running = false;             // fully stopped: stop drawing to save battery
+    return;
+  }
+  requestAnimationFrame(animateSwirl);
+}
+
+function startSwirl() {
+  if (reduceMotion) return;
+  if (!running) {
+    running = true;
+    lastTime = performance.now();
+    requestAnimationFrame(animateSwirl);
+  }
+}
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+window.addEventListener("resize", resizeSwirl);
+resizeSwirl();
+
+// ---------- Small sound players ----------
+// Only one plays at a time; the swirl spins while any of them is playing.
+const miniPlayers = [];
+
+function anyPlaying() {
+  return miniPlayers.some(p => !p.audio.paused);
+}
+
+document.querySelectorAll(".mini").forEach(root => {
+  const audio = new Audio();
+  audio.preload = "metadata";
+  audio.src = root.dataset.src;
+
+  const playBtn = root.querySelector(".mini-play");
+  const bar = root.querySelector(".mini-bar");
+  const fill = root.querySelector(".mini-fill");
+
+  miniPlayers.push({ audio });
+
+  playBtn.addEventListener("click", () => {
+    if (audio.paused) {
+      miniPlayers.forEach(p => { if (p.audio !== audio) p.audio.pause(); });
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+    }
+  });
+
+  audio.addEventListener("play", () => {
+    playBtn.textContent = "Ⅱ";
+    spinTarget = SPIN_SPEED;
+    startSwirl();
+  });
+
+  audio.addEventListener("pause", () => {
+    playBtn.textContent = "▶";
+    if (!anyPlaying()) spinTarget = 0;
+  });
+
+  audio.addEventListener("ended", () => {
+    playBtn.textContent = "▶";
+    fill.style.width = "0%";
+    if (!anyPlaying()) spinTarget = 0;
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    if (audio.duration) fill.style.width = (audio.currentTime / audio.duration * 100) + "%";
+  });
+
+  bar.addEventListener("click", event => {
+    if (!audio.duration) return;
+    const rect = bar.getBoundingClientRect();
+    audio.currentTime = ((event.clientX - rect.left) / rect.width) * audio.duration;
+  });
 });
 </script>
 
